@@ -1,10 +1,96 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/main-layout :: appHead('Quản lý Yêu cầu - Admin Portal')}"></head>
+<body class="bg-light">
+
+<header th:replace="~{layout/main-layout :: appHeader}"></header>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3 col-lg-2 p-0 bg-white shadow-sm min-vh-100">
+            <div class="p-3 border-bottom text-center">
+                <span class="badge bg-danger mb-2">QUẢN TRỊ VIÊN</span><br>
+                <span class="fw-bold text-primary">Phùng Quang Tiến</span>
+            </div>
+            <ul class="nav flex-column py-2">
+                <li class="nav-item">
+                    <a class="nav-link text-dark px-3 py-2" th:href="@{/admin/devices}">
+                        Quản lý Thiết bị/Lab
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-primary fw-bold bg-light border-end border-primary border-3 px-3 py-2" th:href="@{/admin/requests}">
+                        Yêu cầu mượn
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <main class="col-md-9 col-lg-10 p-4">
+            <div th:replace="~{layout/main-layout :: flashMessage}"></div>
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="mb-0">Danh sách Yêu cầu Mượn</h4>
+                <span class="text-muted">Đang chờ xử lý: <strong>2</strong></span>
+            </div>
+
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                            <tr>
+                                <th class="ps-3">Mã SV</th>
+                                <th>Họ và Tên</th>
+                                <th>Thiết bị/Phòng Lab</th>
+                                <th>SL</th>
+                                <th>Ngày nhận</th>
+                                <th>Ngày trả</th>
+                                <th>Trạng thái</th>
+                                <th class="text-end pe-3">Hành động</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td class="ps-3">B21DCCN123</td>
+                                <td>Nguyễn Văn A</td>
+                                <td>Màn hình rời Dell 24"</td>
+                                <td>1</td>
+                                <td>20/04/2026</td>
+                                <td>25/04/2026</td>
+                                <td><span class="badge bg-warning text-dark">Chờ duyệt</span></td>
+                                <td class="text-end pe-3">
+                                    <form th:action="@{/admin/requests/approve}" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-success">Duyệt</button>
+                                    </form>
+                                    <button class="btn btn-sm btn-outline-danger">Từ chối</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="ps-3">B21DCCN456</td>
+                                <td>Trần Thị B (CNTT2)</td>
+                                <td>Board mạch Arduino Uno</td>
+                                <td>3</td>
+                                <td>21/04/2026</td>
+                                <td>22/04/2026</td>
+                                <td><span class="badge bg-warning text-dark">Chờ duyệt</span></td>
+                                <td class="text-end pe-3">
+                                    <form th:action="@{/admin/requests/approve}" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-success">Duyệt</button>
+                                    </form>
+                                    <button class="btn btn-sm btn-outline-danger">Từ chối</button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<footer th:replace="~{layout/main-layout :: appFooter}"></footer>
 
 </body>
 </html>
