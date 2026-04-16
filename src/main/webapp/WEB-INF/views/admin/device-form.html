@@ -7,29 +7,7 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-3 col-lg-2 p-0 bg-white shadow-sm min-vh-100">
-            <div class="p-3 border-bottom text-center">
-                <span class="badge bg-danger mb-2">QUẢN TRỊ VIÊN</span><br>
-                <span class="fw-bold text-primary">Admin System</span>
-            </div>
-            <ul class="nav flex-column py-2">
-                <li class="nav-item">
-                    <a class="nav-link text-dark px-3 py-2" th:href="@{/admin/dashboard}">
-                        Tổng quan
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-primary fw-bold bg-light border-end border-primary border-3 px-3 py-2" th:href="@{/admin/devices}">
-                        Quản lý Thiết bị/Lab
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark px-3 py-2" th:href="@{/admin/requests}">
-                        Yêu cầu mượn
-                    </a>
-                </li>
-            </ul>
-        </div>
+        <aside th:replace="~{layout/main-layout :: adminSidebar('devices')}"></aside>
 
         <main class="col-md-9 col-lg-10 p-4">
 

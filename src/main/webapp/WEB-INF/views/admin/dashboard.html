@@ -1,35 +1,13 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{layout/main-layout :: appHead('Dashboard - Quản trị Lab')}"></head>
+<head th:replace="~{layout/main-layout :: appHead('Bảng điều khiển - Admin')}" ></head>
 <body class="bg-light">
 
 <header th:replace="~{layout/main-layout :: appHeader}"></header>
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-3 col-lg-2 p-0 bg-white shadow-sm min-vh-100">
-            <div class="p-3 border-bottom text-center">
-                <span class="badge bg-danger mb-2">QUẢN TRỊ VIÊN</span><br>
-                <span class="fw-bold text-primary">Admin System</span>
-            </div>
-            <ul class="nav flex-column py-2">
-                <li class="nav-item">
-                    <a class="nav-link text-primary fw-bold bg-light border-end border-primary border-3 px-3 py-2" th:href="@{/admin/dashboard}">
-                        Tổng quan (Dashboard)
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark px-3 py-2" th:href="@{/admin/devices}">
-                        Quản lý Thiết bị/Lab
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark px-3 py-2" th:href="@{/admin/requests}">
-                        Yêu cầu mượn
-                    </a>
-                </li>
-            </ul>
-        </div>
+        <aside th:replace="~{layout/main-layout :: adminSidebar('dashboard')}"></aside>
 
         <main class="col-md-9 col-lg-10 p-4">
             <div th:replace="~{layout/main-layout :: flashMessage}"></div>
@@ -37,120 +15,80 @@
             <h4 class="mb-4">Tổng quan hệ thống</h4>
 
             <div class="row g-3 mb-4">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="card border-0 shadow-sm bg-primary text-white">
                         <div class="card-body">
-                            <h6>Tổng Thiết bị & Phòng Lab</h6>
-                            <h2 class="mb-0">156</h2>
+                            <h6>Số loại thiết bị</h6>
+                            <h2 class="mb-0" th:text="${totalDevices}">0</h2>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm bg-info text-white">
+                        <div class="card-body">
+                            <h6>Tổng tồn kho</h6>
+                            <h2 class="mb-0" th:text="${totalStock}">0</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
                     <div class="card border-0 shadow-sm bg-warning text-dark">
                         <div class="card-body">
                             <h6>Yêu cầu chờ duyệt</h6>
-                            <h2 class="mb-0">12</h2>
+                            <h2 class="mb-0" th:text="${totalPending}">0</h2>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="card border-0 shadow-sm bg-success text-white">
                         <div class="card-body">
-                            <h6>Đang cho mượn</h6>
-                            <h2 class="mb-0">45</h2>
+                            <h6>Yêu cầu đã duyệt</h6>
+                            <h2 class="mb-0" th:text="${totalApproved}">0</h2>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">Thao tác nhanh</h6>
+                </div>
+                <div class="card-body">
+                    <a th:href="@{/admin/devices/create}" class="btn btn-outline-primary me-2">+ Thêm thiết bị</a>
+                    <a th:href="@{/admin/requests}" class="btn btn-outline-secondary">Xem yêu cầu</a>
                 </div>
             </div>
 
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white pb-0 border-bottom-0 pt-3">
-                    <h6 class="mb-0">Thao tác nhanh</h6>
+                <div class="card-header bg-white">
+                    <h6 class="mb-0">Yêu cầu gần đây</h6>
                 </div>
-                <div class="card-body">
-                    <a th:href="@{/admin/devices/add}" class="btn btn-outline-primary me-2">+ Thêm Thiết bị mới</a>
-                    <a th:href="@{/admin/requests}" class="btn btn-outline-secondary">Xử lý yêu cầu ngay &rarr;</a>
-                </div>
-            </div>
-        </main>
-    </div>
-</div>
-
-<footer th:replace="~{layout/main-layout :: appFooter}"></footer>
-
-</body>
-</html><!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{layout/main-layout :: appHead('Dashboard - Quản trị Lab')}"></head>
-<body class="bg-light">
-
-<header th:replace="~{layout/main-layout :: appHeader}"></header>
-
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-3 col-lg-2 p-0 bg-white shadow-sm min-vh-100">
-            <div class="p-3 border-bottom text-center">
-                <span class="badge bg-danger mb-2">QUẢN TRỊ VIÊN</span><br>
-                <span class="fw-bold text-primary">Admin System</span>
-            </div>
-            <ul class="nav flex-column py-2">
-                <li class="nav-item">
-                    <a class="nav-link text-primary fw-bold bg-light border-end border-primary border-3 px-3 py-2" th:href="@{/admin/dashboard}">
-                        Tổng quan (Dashboard)
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark px-3 py-2" th:href="@{/admin/devices}">
-                        Quản lý Thiết bị/Lab
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark px-3 py-2" th:href="@{/admin/requests}">
-                        Yêu cầu mượn
-                    </a>
-                </li>
-            </ul>
-        </div>
-
-        <main class="col-md-9 col-lg-10 p-4">
-            <div th:replace="~{layout/main-layout :: flashMessage}"></div>
-
-            <h4 class="mb-4">Tổng quan hệ thống</h4>
-
-            <div class="row g-3 mb-4">
-                <div class="col-md-4">
-                    <div class="card border-0 shadow-sm bg-primary text-white">
-                        <div class="card-body">
-                            <h6>Tổng Thiết bị & Phòng Lab</h6>
-                            <h2 class="mb-0">156</h2>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card border-0 shadow-sm bg-warning text-dark">
-                        <div class="card-body">
-                            <h6>Yêu cầu chờ duyệt</h6>
-                            <h2 class="mb-0">12</h2>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card border-0 shadow-sm bg-success text-white">
-                        <div class="card-body">
-                            <h6>Đang cho mượn</h6>
-                            <h2 class="mb-0">45</h2>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white pb-0 border-bottom-0 pt-3">
-                    <h6 class="mb-0">Thao tác nhanh</h6>
-                </div>
-                <div class="card-body">
-                    <a th:href="@{/admin/devices/add}" class="btn btn-outline-primary me-2">+ Thêm Thiết bị mới</a>
-                    <a th:href="@{/admin/requests}" class="btn btn-outline-secondary">Xử lý yêu cầu ngay &rarr;</a>
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle mb-0">
+                        <thead class="table-light">
+                        <tr>
+                            <th class="ps-3">Mã SV</th>
+                            <th>Họ tên</th>
+                            <th>Thiết bị</th>
+                            <th>SL</th>
+                            <th>Ngày mượn</th>
+                            <th>Ngày trả</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="request : ${recentRequests}">
+                            <td class="ps-3" th:text="${request.studentCode}">SV01</td>
+                            <td th:text="${request.studentName}">Sinh viên</td>
+                            <td th:text="${request.device != null ? request.device.name : '-'}">Thiết bị</td>
+                            <td th:text="${request.quantity}">1</td>
+                            <td th:text="${request.borrowDate}">2026-01-01</td>
+                            <td th:text="${request.returnDate}">2026-01-02</td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(recentRequests)}">
+                            <td colspan="6" class="text-center text-muted py-3">Chưa có yêu cầu nào</td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </main>

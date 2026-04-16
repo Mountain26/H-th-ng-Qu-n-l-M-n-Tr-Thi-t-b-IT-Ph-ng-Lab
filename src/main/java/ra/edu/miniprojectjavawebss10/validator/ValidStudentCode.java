@@ -14,11 +14,9 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidStudentCode {
-    // Message mặc định cho rule mã sinh viên.
     String message() default "Mã sinh viên phải có ít nhất 3 ký tự, 2 ký tự đầu là chữ và các ký tự sau là số";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
 }
-

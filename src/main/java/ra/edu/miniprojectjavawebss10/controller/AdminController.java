@@ -29,16 +29,34 @@ public class AdminController {
         this.borrowService = borrowService;
     }
 
-    @GetMapping({"", "/dashboard", "/devices"})
+    @GetMapping({"", "/dashboard"})
+    public String dashboard(Model model) {
+        List<Device> devices = deviceService.findAll();
+        List<BorrowRequest> requests = borrowService.findAll();
+
+        int totalStock = devices.stream().mapToInt(Device::getQuantity).sum();
+        int totalPending = (int) requests.stream().filter(r -> BorrowRequest.STATUS_PENDING.equals(r.getStatus())).count();
+        int totalApproved = (int) requests.stream().filter(r -> BorrowRequest.STATUS_APPROVED.equals(r.getStatus())).count();
+
+        model.addAttribute("totalDevices", devices.size());
+        model.addAttribute("totalStock", totalStock);
+        model.addAttribute("totalRequests", requests.size());
+        model.addAttribute("totalPending", totalPending);
+        model.addAttribute("totalApproved", totalApproved);
+        model.addAttribute("recentRequests", requests.stream().limit(5).toList());
+        return "admin/dashboard";
+    }
+
+    @GetMapping("/devices")
     public String listDevices(Model model) {
         model.addAttribute("devices", deviceService.findAll());
-        return "admin/dashboard";
+        return "admin/device-list";
     }
 
     @GetMapping("/devices/create")
     public String showCreateForm(Model model) {
         model.addAttribute("deviceForm", new DeviceFormDTO());
-        model.addAttribute("pageTitle", "Them thiet bi");
+        model.addAttribute("pageTitle", "Thêm thiết bị");
         model.addAttribute("submitUrl", "/admin/devices/create");
         return "admin/device-form";
     }
@@ -51,21 +69,21 @@ public class AdminController {
             RedirectAttributes redirectAttributes
     ) {
         if (bindingResult.hasErrors()) {
-            model.addAttribute("pageTitle", "Them thiet bi");
+            model.addAttribute("pageTitle", "Thêm thiết bị");
             model.addAttribute("submitUrl", "/admin/devices/create");
             return "admin/device-form";
         }
 
         deviceService.create(toEntity(form, 0));
-        redirectAttributes.addFlashAttribute("successMessage", "Them thiet bi thanh cong.");
+        redirectAttributes.addFlashAttribute("successMessage", "Thêm thiết bị thành công.");
         return "redirect:/admin/devices";
     }
 
     @GetMapping("/devices/edit/{id}")
-    public String showEditForm(@PathVariable int id, Model model, RedirectAttributes redirectAttributes) {
+    public String showEditForm(@PathVariable("id") int id, Model model, RedirectAttributes redirectAttributes) {
         Device device = deviceService.findById(id);
         if (device == null) {
-            redirectAttributes.addFlashAttribute("successMessage", "Khong tim thay thiet bi.");
+            redirectAttributes.addFlashAttribute("successMessage", "Không tìm thấy thiết bị.");
             return "redirect:/admin/devices";
         }
 
@@ -76,14 +94,14 @@ public class AdminController {
 
         model.addAttribute("deviceId", id);
         model.addAttribute("deviceForm", form);
-        model.addAttribute("pageTitle", "Cap nhat thiet bi");
+        model.addAttribute("pageTitle", "Cập nhật thiết bị");
         model.addAttribute("submitUrl", "/admin/devices/edit/" + id);
         return "admin/device-form";
     }
 
     @PostMapping("/devices/edit/{id}")
     public String updateDevice(
-            @PathVariable int id,
+            @PathVariable("id") int id,
             @Valid @ModelAttribute("deviceForm") DeviceFormDTO form,
             BindingResult bindingResult,
             Model model,
@@ -91,37 +109,58 @@ public class AdminController {
     ) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("deviceId", id);
-            model.addAttribute("pageTitle", "Cap nhat thiet bi");
+            model.addAttribute("pageTitle", "Cập nhật thiết bị");
             model.addAttribute("submitUrl", "/admin/devices/edit/" + id);
             return "admin/device-form";
         }
 
         boolean updated = deviceService.update(toEntity(form, id));
         if (!updated) {
-            redirectAttributes.addFlashAttribute("successMessage", "Khong tim thay thiet bi de cap nhat.");
+            redirectAttributes.addFlashAttribute("successMessage", "Không tìm thấy thiết bị để cập nhật.");
             return "redirect:/admin/devices";
         }
 
-        redirectAttributes.addFlashAttribute("successMessage", "Cap nhat thiet bi thanh cong.");
+        redirectAttributes.addFlashAttribute("successMessage", "Cập nhật thiết bị thành công.");
         return "redirect:/admin/devices";
     }
 
     @PostMapping("/devices/delete/{id}")
-    public String deleteDevice(@PathVariable int id, RedirectAttributes redirectAttributes) {
+    public String deleteDevice(@PathVariable("id") int id, RedirectAttributes redirectAttributes) {
         boolean deleted = deviceService.deleteById(id);
         if (deleted) {
-            redirectAttributes.addFlashAttribute("successMessage", "Xoa thiet bi thanh cong.");
+            redirectAttributes.addFlashAttribute("successMessage", "Xóa thiết bị thành công.");
         } else {
-            redirectAttributes.addFlashAttribute("successMessage", "Khong tim thay thiet bi de xoa.");
+            redirectAttributes.addFlashAttribute("successMessage", "Không tìm thấy thiết bị để xóa.");
         }
         return "redirect:/admin/devices";
     }
 
     @GetMapping("/requests")
     public String listRequests(Model model) {
-        List<BorrowRequest> borrowRequests = borrowService.findAll();
-        model.addAttribute("borrowRequests", borrowRequests);
+        model.addAttribute("borrowRequests", borrowService.findAll());
         return "admin/request-list";
+    }
+
+    @PostMapping("/requests/{id}/approve")
+    public String approveRequest(@PathVariable("id") int id, RedirectAttributes redirectAttributes) {
+        boolean approved = borrowService.approve(id);
+        if (approved) {
+            redirectAttributes.addFlashAttribute("successMessage", "Đã duyệt yêu cầu mượn.");
+        } else {
+            redirectAttributes.addFlashAttribute("successMessage", "Không thể duyệt: yêu cầu không hợp lệ hoặc thiết bị không đủ số lượng.");
+        }
+        return "redirect:/admin/requests";
+    }
+
+    @PostMapping("/requests/{id}/reject")
+    public String rejectRequest(@PathVariable("id") int id, RedirectAttributes redirectAttributes) {
+        boolean rejected = borrowService.reject(id);
+        if (rejected) {
+            redirectAttributes.addFlashAttribute("successMessage", "Đã từ chối yêu cầu mượn.");
+        } else {
+            redirectAttributes.addFlashAttribute("successMessage", "Không thể từ chối yêu cầu này.");
+        }
+        return "redirect:/admin/requests";
     }
 
     private Device toEntity(DeviceFormDTO form, int id) {

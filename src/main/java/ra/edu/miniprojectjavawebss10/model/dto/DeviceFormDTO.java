@@ -5,14 +5,14 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public class DeviceFormDTO {
-    @NotBlank(message = "Ten thiet bi khong duoc de trong")
+    @NotBlank(message = "Tên thiết bị không được để trống")
     private String name;
 
-    @NotBlank(message = "Anh minh hoa khong duoc de trong")
+    @NotBlank(message = "Ảnh minh họa không được để trống")
     private String image;
 
-    @NotNull(message = "So luong khong duoc de trong")
-    @Min(value = 0, message = "So luong phai lon hon hoac bang 0")
+    @NotNull(message = "Số lượng không được để trống")
+    @Min(value = 0, message = "Số lượng phải lớn hơn hoặc bằng 0")
     private Integer quantity;
 
     public String getName() {
@@ -39,4 +39,3 @@ public class DeviceFormDTO {
         this.quantity = quantity;
     }
 }
-

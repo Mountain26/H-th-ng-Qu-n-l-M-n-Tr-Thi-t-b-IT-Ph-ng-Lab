@@ -1,37 +1,20 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{layout/main-layout :: appHead('Quản lý Yêu cầu - Admin Portal')}"></head>
+<head th:replace="~{layout/main-layout :: appHead('Danh sách yêu cầu - Admin')}"></head>
 <body class="bg-light">
 
 <header th:replace="~{layout/main-layout :: appHeader}"></header>
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-3 col-lg-2 p-0 bg-white shadow-sm min-vh-100">
-            <div class="p-3 border-bottom text-center">
-                <span class="badge bg-danger mb-2">QUẢN TRỊ VIÊN</span><br>
-                <span class="fw-bold text-primary">Phùng Quang Tiến</span>
-            </div>
-            <ul class="nav flex-column py-2">
-                <li class="nav-item">
-                    <a class="nav-link text-dark px-3 py-2" th:href="@{/admin/devices}">
-                        Quản lý Thiết bị/Lab
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-primary fw-bold bg-light border-end border-primary border-3 px-3 py-2" th:href="@{/admin/requests}">
-                        Yêu cầu mượn
-                    </a>
-                </li>
-            </ul>
-        </div>
+        <aside th:replace="~{layout/main-layout :: adminSidebar('requests')}"></aside>
 
         <main class="col-md-9 col-lg-10 p-4">
             <div th:replace="~{layout/main-layout :: flashMessage}"></div>
 
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h4 class="mb-0">Danh sách Yêu cầu Mượn</h4>
-                <span class="text-muted">Đang chờ xử lý: <strong>2</strong></span>
+                <h4 class="mb-0">Danh sách yêu cầu mượn</h4>
+                <span class="text-muted">Tổng yêu cầu: <strong th:text="${#lists.size(borrowRequests)}">0</strong></span>
             </div>
 
             <div class="card shadow-sm border-0">
@@ -41,45 +24,46 @@
                             <thead class="table-light">
                             <tr>
                                 <th class="ps-3">Mã SV</th>
-                                <th>Họ và Tên</th>
-                                <th>Thiết bị/Phòng Lab</th>
+                                <th>Họ tên</th>
+                                <th>Thiết bị</th>
                                 <th>SL</th>
-                                <th>Ngày nhận</th>
+                                <th>Ngày mượn</th>
                                 <th>Ngày trả</th>
+                                <th>Lý do</th>
                                 <th>Trạng thái</th>
-                                <th class="text-end pe-3">Hành động</th>
+                                <th class="text-end pe-3">Thao tác</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                <td class="ps-3">B21DCCN123</td>
-                                <td>Nguyễn Văn A</td>
-                                <td>Màn hình rời Dell 24"</td>
-                                <td>1</td>
-                                <td>20/04/2026</td>
-                                <td>25/04/2026</td>
-                                <td><span class="badge bg-warning text-dark">Chờ duyệt</span></td>
+                            <tr th:each="request : ${borrowRequests}">
+                                <td class="ps-3" th:text="${request.studentCode}">SV001</td>
+                                <td th:text="${request.studentName}">Name</td>
+                                <td th:text="${request.device != null ? request.device.name : '-'}">Device</td>
+                                <td th:text="${request.quantity}">1</td>
+                                <td th:text="${request.borrowDate}">2026-01-01</td>
+                                <td th:text="${request.returnDate}">2026-01-02</td>
+                                <td th:text="${request.reason}">Reason</td>
+                                <td>
+                                    <span class="badge"
+                                          th:classappend="${request.status == 'APPROVED'} ? ' bg-success' : (${request.status == 'REJECTED'} ? ' bg-danger' : ' bg-warning text-dark')"
+                                          th:text="${request.status == 'APPROVED'} ? 'Đã duyệt' : (${request.status == 'REJECTED'} ? 'Đã từ chối' : 'Chờ duyệt')">
+                                        Chờ duyệt
+                                    </span>
+                                </td>
                                 <td class="text-end pe-3">
-                                    <form th:action="@{/admin/requests/approve}" method="post" class="d-inline">
-                                        <button type="submit" class="btn btn-sm btn-success">Duyệt</button>
-                                    </form>
-                                    <button class="btn btn-sm btn-outline-danger">Từ chối</button>
+                                    <div th:if="${request.status == 'PENDING'}" class="d-flex justify-content-end gap-1">
+                                        <form th:action="@{'/admin/requests/' + ${request.id} + '/approve'}" method="post">
+                                            <button type="submit" class="btn btn-sm btn-success">Duyệt</button>
+                                        </form>
+                                        <form th:action="@{'/admin/requests/' + ${request.id} + '/reject'}" method="post">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">Từ chối</button>
+                                        </form>
+                                    </div>
+                                    <span th:if="${request.status != 'PENDING'}" class="text-muted small">Đã xử lý</span>
                                 </td>
                             </tr>
-                            <tr>
-                                <td class="ps-3">B21DCCN456</td>
-                                <td>Trần Thị B (CNTT2)</td>
-                                <td>Board mạch Arduino Uno</td>
-                                <td>3</td>
-                                <td>21/04/2026</td>
-                                <td>22/04/2026</td>
-                                <td><span class="badge bg-warning text-dark">Chờ duyệt</span></td>
-                                <td class="text-end pe-3">
-                                    <form th:action="@{/admin/requests/approve}" method="post" class="d-inline">
-                                        <button type="submit" class="btn btn-sm btn-success">Duyệt</button>
-                                    </form>
-                                    <button class="btn btn-sm btn-outline-danger">Từ chối</button>
-                                </td>
+                            <tr th:if="${#lists.isEmpty(borrowRequests)}">
+                                <td colspan="9" class="text-center text-muted py-3">Chưa có yêu cầu nào</td>
                             </tr>
                             </tbody>
                         </table>

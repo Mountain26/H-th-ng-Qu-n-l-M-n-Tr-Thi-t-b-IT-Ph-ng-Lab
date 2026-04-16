@@ -23,4 +23,11 @@ public class BorrowRepository {
                 .sorted(Comparator.comparingInt(BorrowRequest::getId).reversed())
                 .toList();
     }
+
+    public BorrowRequest findById(int id) {
+        return requests.stream()
+                .filter(request -> request.getId() == id)
+                .findFirst()
+                .orElse(null);
+    }
 }

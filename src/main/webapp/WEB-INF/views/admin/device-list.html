@@ -1,37 +1,20 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{layout/main-layout :: appHead('Kho Thiết bị - Admin Portal')}"></head>
+<head th:replace="~{layout/main-layout :: appHead('Quản lý thiết bị - Admin')}"></head>
 <body class="bg-light">
 
 <header th:replace="~{layout/main-layout :: appHeader}"></header>
 
 <div class="container-fluid">
   <div class="row">
-    <div class="col-md-3 col-lg-2 p-0 bg-white shadow-sm min-vh-100">
-      <div class="p-3 border-bottom text-center">
-        <span class="badge bg-danger mb-2">QUẢN TRỊ VIÊN</span><br>
-        <span class="fw-bold text-primary">Phùng Quang Tiến</span>
-      </div>
-      <ul class="nav flex-column py-2">
-        <li class="nav-item">
-          <a class="nav-link text-primary fw-bold bg-light border-end border-primary border-3 px-3 py-2" th:href="@{/admin/devices}">
-            Quản lý Thiết bị/Lab
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link text-dark px-3 py-2" th:href="@{/admin/requests}">
-            Yêu cầu mượn
-          </a>
-        </li>
-      </ul>
-    </div>
+    <aside th:replace="~{layout/main-layout :: adminSidebar('devices')}"></aside>
 
     <main class="col-md-9 col-lg-10 p-4">
       <div th:replace="~{layout/main-layout :: flashMessage}"></div>
 
       <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="mb-0">Quản lý Thiết bị & Phòng Lab</h4>
-        <button class="btn btn-primary">+ Thêm mới</button>
+        <h4 class="mb-0">Quản lý thiết bị và phòng lab</h4>
+        <a class="btn btn-primary" th:href="@{/admin/devices/create}">+ Thêm mới</a>
       </div>
 
       <div class="card shadow-sm border-0">
@@ -40,34 +23,33 @@
             <table class="table table-striped align-middle mb-0">
               <thead class="table-dark">
               <tr>
-                <th class="ps-3">Mã TB</th>
-                <th>Tên Thiết bị/Phòng</th>
-                <th>Loại</th>
-                <th>Tổng số lượng</th>
-                <th>Tồn kho (Sẵn sàng)</th>
-                <th class="text-end pe-3">Tuỳ chỉnh</th>
+                <th class="ps-3">ID</th>
+                <th>Tên thiết bị</th>
+                <th>Ảnh</th>
+                <th>Số lượng</th>
+                <th class="text-end pe-3">Tùy chỉnh</th>
               </tr>
               </thead>
               <tbody>
-              <tr>
-                <td class="ps-3">DEV-001</td>
-                <td>Màn hình rời Dell 24"</td>
-                <td>Phần cứng</td>
-                <td>20</td>
-                <td class="text-success fw-bold">15</td>
+              <tr th:each="device : ${devices}">
+                <td class="ps-3" th:text="${device.id}">1</td>
+                <td th:text="${device.name}">Device</td>
+                <td>
+                  <img th:src="${device.image}" alt="device" style="width: 64px; height: 40px; object-fit: cover;">
+                </td>
+                <td>
+                  <span class="badge" th:classappend="${device.quantity > 0} ? ' bg-success' : ' bg-danger'"
+                        th:text="${device.quantity}">0</span>
+                </td>
                 <td class="text-end pe-3">
-                  <button class="btn btn-sm btn-outline-secondary">Sửa</button>
+                  <a class="btn btn-sm btn-outline-secondary" th:href="@{'/admin/devices/edit/' + ${device.id}}">Sửa</a>
+                  <form th:action="@{'/admin/devices/delete/' + ${device.id}}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Xóa</button>
+                  </form>
                 </td>
               </tr>
-              <tr>
-                <td class="ps-3">LAB-301</td>
-                <td>Phòng Lab Máy tính 301</td>
-                <td>Phòng thực hành</td>
-                <td>1</td>
-                <td class="text-success fw-bold">1</td>
-                <td class="text-end pe-3">
-                  <button class="btn btn-sm btn-outline-secondary">Sửa</button>
-                </td>
+              <tr th:if="${#lists.isEmpty(devices)}">
+                <td colspan="5" class="text-center text-muted py-3">Chưa có thiết bị</td>
               </tr>
               </tbody>
             </table>

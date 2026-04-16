@@ -15,8 +15,8 @@ public class DeviceRepository {
 
     public DeviceRepository() {
         save(new Device(0, "Laptop Dell G15", "https://via.placeholder.com/150?text=Dell+G15", 10));
-        save(new Device(0, "May chieu Sony", "https://via.placeholder.com/150?text=Projector", 5));
-        save(new Device(0, "Bang ve Wacom", "https://via.placeholder.com/150?text=Wacom", 15));
+        save(new Device(0, "Máy chiếu Sony", "https://via.placeholder.com/150?text=Projector", 5));
+        save(new Device(0, "Bảng vẽ Wacom", "https://via.placeholder.com/150?text=Wacom", 15));
     }
 
     public List<Device> findAll() {

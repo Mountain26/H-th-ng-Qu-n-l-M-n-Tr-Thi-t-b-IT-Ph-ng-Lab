@@ -1,17 +1,36 @@
 package ra.edu.miniprojectjavawebss10.service;
 
+import org.springframework.stereotype.Service;
 import ra.edu.miniprojectjavawebss10.model.entity.Device;
+import ra.edu.miniprojectjavawebss10.repository.DeviceRepository;
 
 import java.util.List;
 
-public interface DeviceService {
-    List<Device> findAll();
+@Service
+public class DeviceService {
+    private final DeviceRepository deviceRepository;
 
-    Device findById(int id);
+    public DeviceService(DeviceRepository deviceRepository) {
+        this.deviceRepository = deviceRepository;
+    }
 
-    Device create(Device device);
+    public List<Device> findAll() {
+        return deviceRepository.findAll();
+    }
 
-    boolean update(Device device);
+    public Device findById(int id) {
+        return deviceRepository.findById(id);
+    }
 
-    boolean deleteById(int id);
+    public Device create(Device device) {
+        return deviceRepository.save(device);
+    }
+
+    public boolean update(Device device) {
+        return deviceRepository.update(device);
+    }
+
+    public boolean deleteById(int id) {
+        return deviceRepository.deleteById(id);
+    }
 }
