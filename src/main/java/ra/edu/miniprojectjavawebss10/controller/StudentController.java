@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ra.edu.miniprojectjavawebss10.model.dto.BorrowRequestDTO;
 import ra.edu.miniprojectjavawebss10.model.entity.BorrowRequest;
 import ra.edu.miniprojectjavawebss10.model.entity.Device;
@@ -52,7 +53,8 @@ public class StudentController {
     public String submitBorrowForm(
             @Valid @ModelAttribute("borrowRequest") BorrowRequestDTO borrowRequestDTO,
             BindingResult bindingResult,
-            Model model
+            Model model,
+            RedirectAttributes redirectAttributes
     ) {
         Device device = deviceService.findById(borrowRequestDTO.getDeviceId());
         if (device == null) {
@@ -75,7 +77,8 @@ public class StudentController {
         request.setDevice(device);
 
         borrowService.save(request);
+        redirectAttributes.addFlashAttribute("successMessage", "Dang ky thanh cong. Yeu cau muon da duoc gui.");
 
-        return "redirect:/student/devices?success";
+        return "redirect:/student/devices";
     }
 }
