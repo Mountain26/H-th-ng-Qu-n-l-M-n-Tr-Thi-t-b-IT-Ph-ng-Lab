@@ -1,4 +1,7 @@
 package ra.edu.miniprojectjavawebss10.service;
 
-public class BorrowService {
+import ra.edu.miniprojectjavawebss10.model.entity.BorrowRequest;
+
+public interface BorrowService {
+    void save(BorrowRequest request);
 }
