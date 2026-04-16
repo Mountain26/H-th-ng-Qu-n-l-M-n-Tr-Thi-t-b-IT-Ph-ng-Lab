@@ -1,75 +1,77 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="layout/main-layout :: appHead('Dang ky muon thiet bi')"></head>
+<head th:replace="layout/main-layout :: appHead('Đăng ký mượn thiết bị')"></head>
 <body class="bg-light">
 <div th:replace="layout/main-layout :: appHeader"></div>
 
 <div class="container py-4">
     <div class="row justify-content-center g-4">
+        <!-- Thông tin thiết bị -->
         <div class="col-lg-4">
             <div class="card shadow-sm border-0">
                 <img th:src="${device.image != null and !device.image.isEmpty() ? device.image : 'https://via.placeholder.com/300x200?text=IMG'}"
                      th:alt="${device.name}" class="card-img-top" style="height: 220px; object-fit: cover;">
                 <div class="card-body">
-                    <h5 class="card-title" th:text="${device.name}">Ten thiet bi</h5>
-                    <p class="mb-0">So luong con lai: <strong th:text="${device.quantity}">0</strong></p>
+                    <h5 class="card-title" th:text="${device.name}">Tên thiết bị</h5>
+                    <p class="mb-0">Số lượng còn lại: <strong th:text="${device.quantity}">0</strong></p>
                 </div>
             </div>
         </div>
 
+        <!-- Form đăng ký -->
         <div class="col-lg-8">
             <div class="card shadow-sm border-0">
                 <div class="card-body p-4">
-                    <h4 class="mb-3 text-primary">Form dang ky muon</h4>
+                    <h4 class="mb-3 text-primary">Form đăng ký mượn</h4>
                     <form th:action="@{/student/borrow}" th:object="${borrowRequest}" method="post" novalidate>
                         <input type="hidden" th:field="*{deviceId}">
 
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label">Ho va ten</label>
-                                <input type="text" th:field="*{studentName}" class="form-control" placeholder="Nhap ho va ten">
+                                <label class="form-label">Họ và tên</label>
+                                <input type="text" th:field="*{studentName}" class="form-control" placeholder="Nhập họ và tên">
                                 <small class="text-danger" th:if="${#fields.hasErrors('studentName')}" th:errors="*{studentName}"></small>
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label">Ma sinh vien</label>
+                                <label class="form-label">Mã sinh viên</label>
                                 <input type="text" th:field="*{studentCode}" class="form-control" placeholder="VD: SV12345">
                                 <small class="text-danger" th:if="${#fields.hasErrors('studentCode')}" th:errors="*{studentCode}"></small>
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label">Email lien he</label>
+                                <label class="form-label">Email liên hệ</label>
                                 <input type="email" th:field="*{email}" class="form-control" placeholder="example@email.com">
                                 <small class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></small>
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label">So luong muon</label>
-                                <input type="number" min="1" th:field="*{quantity}" class="form-control" placeholder="Nhap so luong">
+                                <label class="form-label">Số lượng mượn</label>
+                                <input type="number" min="1" th:field="*{quantity}" class="form-control" placeholder="Nhập số lượng">
                                 <small class="text-danger" th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}"></small>
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label">Ngay du kien nhan</label>
+                                <label class="form-label">Ngày dự kiến nhận</label>
                                 <input type="date" th:field="*{borrowDate}" class="form-control">
                                 <small class="text-danger" th:if="${#fields.hasErrors('borrowDate')}" th:errors="*{borrowDate}"></small>
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label">Ngay du kien tra</label>
+                                <label class="form-label">Ngày dự kiến trả</label>
                                 <input type="date" th:field="*{returnDate}" class="form-control">
                                 <small class="text-danger" th:if="${#fields.hasErrors('returnDate')}" th:errors="*{returnDate}"></small>
                             </div>
 
                             <div class="col-12">
-                                <label class="form-label">Ly do muon</label>
-                                <textarea th:field="*{reason}" rows="4" class="form-control" placeholder="Mo ta nhu cau muon thiet bi"></textarea>
+                                <label class="form-label">Lý do mượn</label>
+                                <textarea th:field="*{reason}" rows="4" class="form-control" placeholder="Mô tả nhu cầu mượn thiết bị"></textarea>
                                 <small class="text-danger" th:if="${#fields.hasErrors('reason')}" th:errors="*{reason}"></small>
                             </div>
 
                             <div class="col-12 d-flex gap-2 mt-2">
-                                <a th:href="@{/student/devices}" class="btn btn-outline-secondary">Quay lai</a>
-                                <button type="submit" class="btn btn-primary">Gui yeu cau</button>
+                                <a th:href="@{/student/devices}" class="btn btn-outline-secondary">Quay lại</a>
+                                <button type="submit" class="btn btn-primary">Gửi yêu cầu</button>
                             </div>
                         </div>
                     </form>
