@@ -13,9 +13,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ra.edu.miniprojectjavawebss10.model.dto.DeviceFormDTO;
 import ra.edu.miniprojectjavawebss10.model.entity.BorrowRequest;
 import ra.edu.miniprojectjavawebss10.model.entity.Device;
+import ra.edu.miniprojectjavawebss10.model.entity.User;
 import ra.edu.miniprojectjavawebss10.service.BorrowService;
 import ra.edu.miniprojectjavawebss10.service.DeviceService;
 
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
 
 @Controller
@@ -29,8 +31,18 @@ public class AdminController {
         this.borrowService = borrowService;
     }
 
+    private String checkAdmin(HttpSession session) {
+        User user = (User) session.getAttribute("userLogin");
+        if (user == null) return "redirect:/login";
+        if (!"ADMIN".equals(user.getRole())) return "redirect:/student";
+        return null;
+    }
+
     @GetMapping({"", "/dashboard"})
-    public String dashboard(Model model) {
+    public String dashboard(HttpSession session, Model model) {
+        String auth = checkAdmin(session);
+        if (auth != null) return auth;
+
         List<Device> devices = deviceService.findAll();
         List<BorrowRequest> requests = borrowService.findAll();
 
@@ -48,13 +60,19 @@ public class AdminController {
     }
 
     @GetMapping("/devices")
-    public String listDevices(Model model) {
+    public String listDevices(HttpSession session, Model model) {
+        String auth = checkAdmin(session);
+        if (auth != null) return auth;
+
         model.addAttribute("devices", deviceService.findAll());
         return "admin/device-list";
     }
 
     @GetMapping("/devices/create")
-    public String showCreateForm(Model model) {
+    public String showCreateForm(HttpSession session, Model model) {
+        String auth = checkAdmin(session);
+        if (auth != null) return auth;
+
         model.addAttribute("deviceForm", new DeviceFormDTO());
         model.addAttribute("pageTitle", "Thêm thiết bị");
         model.addAttribute("submitUrl", "/admin/devices/create");
@@ -63,11 +81,15 @@ public class AdminController {
 
     @PostMapping("/devices/create")
     public String createDevice(
+            HttpSession session,
             @Valid @ModelAttribute("deviceForm") DeviceFormDTO form,
             BindingResult bindingResult,
             Model model,
             RedirectAttributes redirectAttributes
     ) {
+        String auth = checkAdmin(session);
+        if (auth != null) return auth;
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("pageTitle", "Thêm thiết bị");
             model.addAttribute("submitUrl", "/admin/devices/create");
@@ -80,7 +102,10 @@ public class AdminController {
     }
 
     @GetMapping("/devices/edit/{id}")
-    public String showEditForm(@PathVariable("id") int id, Model model, RedirectAttributes redirectAttributes) {
+    public String showEditForm(HttpSession session, @PathVariable("id") int id, Model model, RedirectAttributes redirectAttributes) {
+        String auth = checkAdmin(session);
+        if (auth != null) return auth;
+
         Device device = deviceService.findById(id);
         if (device == null) {
             redirectAttributes.addFlashAttribute("successMessage", "Không tìm thấy thiết bị.");
@@ -101,12 +126,16 @@ public class AdminController {
 
     @PostMapping("/devices/edit/{id}")
     public String updateDevice(
+            HttpSession session,
             @PathVariable("id") int id,
             @Valid @ModelAttribute("deviceForm") DeviceFormDTO form,
             BindingResult bindingResult,
             Model model,
             RedirectAttributes redirectAttributes
     ) {
+        String auth = checkAdmin(session);
+        if (auth != null) return auth;
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("deviceId", id);
             model.addAttribute("pageTitle", "Cập nhật thiết bị");
@@ -125,7 +154,10 @@ public class AdminController {
     }
 
     @PostMapping("/devices/delete/{id}")
-    public String deleteDevice(@PathVariable("id") int id, RedirectAttributes redirectAttributes) {
+    public String deleteDevice(HttpSession session, @PathVariable("id") int id, RedirectAttributes redirectAttributes) {
+        String auth = checkAdmin(session);
+        if (auth != null) return auth;
+
         boolean deleted = deviceService.deleteById(id);
         if (deleted) {
             redirectAttributes.addFlashAttribute("successMessage", "Xóa thiết bị thành công.");
@@ -136,13 +168,19 @@ public class AdminController {
     }
 
     @GetMapping("/requests")
-    public String listRequests(Model model) {
+    public String listRequests(HttpSession session, Model model) {
+        String auth = checkAdmin(session);
+        if (auth != null) return auth;
+
         model.addAttribute("borrowRequests", borrowService.findAll());
         return "admin/request-list";
     }
 
     @PostMapping("/requests/{id}/approve")
-    public String approveRequest(@PathVariable("id") int id, RedirectAttributes redirectAttributes) {
+    public String approveRequest(HttpSession session, @PathVariable("id") int id, RedirectAttributes redirectAttributes) {
+        String auth = checkAdmin(session);
+        if (auth != null) return auth;
+
         boolean approved = borrowService.approve(id);
         if (approved) {
             redirectAttributes.addFlashAttribute("successMessage", "Đã duyệt yêu cầu mượn.");
@@ -153,7 +191,10 @@ public class AdminController {
     }
 
     @PostMapping("/requests/{id}/reject")
-    public String rejectRequest(@PathVariable("id") int id, RedirectAttributes redirectAttributes) {
+    public String rejectRequest(HttpSession session, @PathVariable("id") int id, RedirectAttributes redirectAttributes) {
+        String auth = checkAdmin(session);
+        if (auth != null) return auth;
+
         boolean rejected = borrowService.reject(id);
         if (rejected) {
             redirectAttributes.addFlashAttribute("successMessage", "Đã từ chối yêu cầu mượn.");

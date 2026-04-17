@@ -13,9 +13,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ra.edu.miniprojectjavawebss10.model.dto.BorrowRequestDTO;
 import ra.edu.miniprojectjavawebss10.model.entity.BorrowRequest;
 import ra.edu.miniprojectjavawebss10.model.entity.Device;
+import ra.edu.miniprojectjavawebss10.model.entity.User;
 import ra.edu.miniprojectjavawebss10.service.BorrowService;
 import ra.edu.miniprojectjavawebss10.service.DeviceService;
 
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
 
 @Controller
@@ -29,15 +31,28 @@ public class StudentController {
         this.borrowService = borrowService;
     }
 
+    private String checkStudent(HttpSession session) {
+        User user = (User) session.getAttribute("userLogin");
+        if (user == null) return "redirect:/login";
+        if (!"STUDENT".equals(user.getRole())) return "redirect:/admin";
+        return null;
+    }
+
     @GetMapping({"", "/devices"})
-    public String listDevices(Model model) {
+    public String listDevices(HttpSession session, Model model) {
+        String auth = checkStudent(session);
+        if (auth != null) return auth;
+
         List<Device> devices = deviceService.findAll();
         model.addAttribute("devices", devices);
         return "student/device-list";
     }
 
     @GetMapping("/borrow/{deviceId}")
-    public String showBorrowForm(@PathVariable("deviceId") int deviceId, Model model) {
+    public String showBorrowForm(HttpSession session, @PathVariable("deviceId") int deviceId, Model model) {
+        String auth = checkStudent(session);
+        if (auth != null) return auth;
+
         Device device = deviceService.findById(deviceId);
         if (device == null || device.getQuantity() <= 0) {
             return "redirect:/student/devices";
@@ -53,11 +68,15 @@ public class StudentController {
 
     @PostMapping("/borrow")
     public String submitBorrowForm(
+            HttpSession session,
             @Valid @ModelAttribute("borrowRequest") BorrowRequestDTO borrowRequestDTO,
             BindingResult bindingResult,
             Model model,
             RedirectAttributes redirectAttributes
     ) {
+        String auth = checkStudent(session);
+        if (auth != null) return auth;
+
         Device device = deviceService.findById(borrowRequestDTO.getDeviceId());
         if (device == null) {
             return "redirect:/student/devices";
