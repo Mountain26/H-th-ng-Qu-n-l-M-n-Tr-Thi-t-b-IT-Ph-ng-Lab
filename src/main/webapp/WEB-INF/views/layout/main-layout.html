@@ -11,9 +11,18 @@
     <nav class="navbar navbar-expand-lg">
         <div class="container">
             <a class="navbar-brand fw-bold text-primary" th:href="@{/student/devices}">IT Lab Portal</a>
-            <div class="d-flex gap-2">
-                <a class="btn btn-outline-primary btn-sm" th:href="@{/student/devices}">Sinh viên</a>
-                <a class="btn btn-outline-secondary btn-sm" th:href="@{/admin/dashboard}">Admin</a>
+            <div class="d-flex gap-2 align-items-center">
+                <a class="btn btn-sm"
+                   th:classappend="${activeNav == 'student'} ? 'btn-primary' : 'btn-outline-primary'"
+                   th:href="@{/student/devices}">Sinh viên</a>
+                <a class="btn btn-sm"
+                   th:classappend="${activeNav == 'admin'} ? 'btn-success' : 'btn-outline-success'"
+                   th:href="@{/admin/dashboard}">Admin</a>
+
+                <!-- Logout button for logged in users -->
+                <a class="btn btn-outline-danger btn-sm ms-3" th:href="@{/logout}" title="Đăng xuất">
+                    Đăng xuất
+                </a>
             </div>
         </div>
     </nav>

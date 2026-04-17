@@ -31,6 +31,11 @@ public class StudentController {
         this.borrowService = borrowService;
     }
 
+    @ModelAttribute
+    public void addGlobalAttributes(Model model) {
+        model.addAttribute("activeNav", "student");
+    }
+
     private String checkStudent(HttpSession session) {
         User user = (User) session.getAttribute("userLogin");
         if (user == null) return "redirect:/login";

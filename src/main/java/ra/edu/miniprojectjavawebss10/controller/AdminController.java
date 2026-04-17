@@ -31,6 +31,11 @@ public class AdminController {
         this.borrowService = borrowService;
     }
 
+    @ModelAttribute
+    public void addGlobalAttributes(Model model) {
+        model.addAttribute("activeNav", "admin");
+    }
+
     private String checkAdmin(HttpSession session) {
         User user = (User) session.getAttribute("userLogin");
         if (user == null) return "redirect:/login";
